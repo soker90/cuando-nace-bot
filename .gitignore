@@ -1,0 +1,8 @@
+
+node_modules/
+
+.wrangler/state/v3/d1/miniflare-D1DatabaseObject/403faf20e052a8455385b7d2163c0cd34b355422f5df9c3a9fd31e813a140560.sqlite
+
+.wrangler/state/v3/d1/miniflare-D1DatabaseObject/403faf20e052a8455385b7d2163c0cd34b355422f5df9c3a9fd31e813a140560.sqlite-shm
+
+.wrangler/state/v3/d1/miniflare-D1DatabaseObject/403faf20e052a8455385b7d2163c0cd34b355422f5df9c3a9fd31e813a140560.sqlite-wal
