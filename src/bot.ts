@@ -6,6 +6,7 @@ import type { Env } from "./types";
 import { registerAdminCommands } from "./commands/admin";
 import { registerEmbarazoCommands } from "./commands/embarazo";
 import { registerCitasCommands } from "./commands/citas";
+import { registerComparadoresCommands } from "./commands/comparadores";
 
 export function createBot(env: Env): Bot {
   const bot = new Bot(env.TELEGRAM_TOKEN);
@@ -21,6 +22,9 @@ export function createBot(env: Env): Bot {
     msg += `/parto — Fecha estimada de parto\n`;
     msg += `/inicio — Datos generales del embarazo\n`;
     msg += `/ecografias — Ver ecografías guardadas\n`;
+    msg += `/fruta — Tu bebé comparado con una fruta\n`;
+    msg += `/animal — Tu bebé comparado con un animal\n`;
+    msg += `/comida — Tu bebé comparado con un alimento\n`;
 
     if (esAdmin) {
       msg += `\n*Comandos adicionales (admin):*\n`;
@@ -67,6 +71,12 @@ export function createBot(env: Env): Bot {
     registerCitasCommands(bot, env);
   } catch (err) {
     console.error("[BOT] Error registrando citas commands:", err);
+  }
+
+  try {
+    registerComparadoresCommands(bot, env);
+  } catch (err) {
+    console.error("[BOT] Error registrando comparadores commands:", err);
   }
 
   // ─── Manejador de errores ─────────────────────────────────────────────────
