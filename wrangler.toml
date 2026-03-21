@@ -8,6 +8,10 @@ binding = "DB"
 database_name = "cuando-nace-db"
 database_id = "b6eda05b-b135-4a24-b154-719df5207c6b"
 
+[triggers]
+# 07:00 UTC = 08:00 Madrid en verano (CEST, UTC+2) / 09:00 en invierno (CET, UTC+1)
+crons = ["0 7 * * *"]
+
 [observability]
 [observability.logs]
 enabled = true

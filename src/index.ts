@@ -1,10 +1,12 @@
 /**
  * Entry point del Cloudflare Worker
- * Recibe las actualizaciones de Telegram vía webhook y las procesa
+ * Recibe las actualizaciones de Telegram vía webhook y las procesa.
+ * También ejecuta notificaciones automáticas mediante cron triggers.
  */
 import { webhookCallback } from "grammy";
 import type { Env } from "./types";
 import { createBot } from "./bot";
+import { notificarCitasProximas } from "./notifications/citas";
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -29,5 +31,13 @@ export default {
       console.error("Error procesando update:", err);
       return new Response("Error interno", { status: 500 });
     }
+  },
+
+  async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+    ctx.waitUntil(
+      notificarCitasProximas(env).catch((err) => {
+        console.error("[CRON] Error en notificarCitasProximas:", err);
+      })
+    );
   },
 };

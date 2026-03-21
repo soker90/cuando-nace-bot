@@ -137,6 +137,45 @@ export async function deleteCita(env: Env, id: number): Promise<boolean> {
   return (result.meta.changes ?? 0) > 0;
 }
 
+export async function getCitasProximas24h(env: Env): Promise<Cita[]> {
+  const ahora = new Date();
+  const en24h = new Date(ahora.getTime() + 24 * 60 * 60 * 1000);
+
+  // Rango: desde ahora hasta dentro de 24 horas
+  // Comparamos como "YYYY-MM-DD HH:MM" (o "YYYY-MM-DD" para citas sin hora)
+  const ahoraISO = ahora.toISOString().replace("T", " ").slice(0, 16);
+  const en24hISO = en24h.toISOString().replace("T", " ").slice(0, 16);
+
+  const result = await env.DB.prepare(`
+    SELECT * FROM citas
+    WHERE (
+      fecha > ? OR (fecha = ? AND (hora IS NULL OR hora >= ?))
+    )
+    AND (
+      fecha < ? OR (fecha = ? AND hora IS NOT NULL AND hora <= ?)
+    )
+    ORDER BY fecha ASC, hora ASC
+  `)
+    .bind(
+      ahoraISO.slice(0, 10),   // fecha > hoy
+      ahoraISO.slice(0, 10),   // o fecha = hoy AND hora >= ahora
+      ahoraISO.slice(11, 16),  // hora parte de ahora
+      en24hISO.slice(0, 10),   // fecha < en24h
+      en24hISO.slice(0, 10),   // o fecha = en24h AND hora <= en24h
+      en24hISO.slice(11, 16),  // hora parte de en24h
+    )
+    .all<Cita>();
+
+  return result.results;
+}
+
+export async function getChatsAdmin(env: Env): Promise<ChatAutorizado[]> {
+  const result = await env.DB.prepare(
+    "SELECT * FROM chats_autorizados WHERE nivel = 'admin'"
+  ).all<ChatAutorizado>();
+  return result.results;
+}
+
 // ─── Chats autorizados ────────────────────────────────────────────────────────
 
 export async function addChatAutorizado(
